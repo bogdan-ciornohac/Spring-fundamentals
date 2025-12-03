@@ -1,7 +1,4 @@
-# Spring-fundamentals
-Sure! Here’s a clean, well-structured **README.md** based on your summary, with a bit of extra context to make it more complete and useful.
-
----
+# **Spring-fundamentals**
 
 # Defining Beans in Spring
 
