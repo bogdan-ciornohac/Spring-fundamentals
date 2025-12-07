@@ -290,3 +290,323 @@ public ReportService(@Qualifier("backupDataSource") DataSource ds) { ... }
 Useful when different configurations of the same type coexist (e.g., multiple data sources, multiple strategies, etc.).
 
 ---
+
+# 🧩 Using Abstraction in Spring
+
+Decoupling your application logic through abstractions is one of the most powerful design practices in software development. By separating **what** a class does (the contract) from **how** it does it (the implementation), you gain flexibility, maintainability, and extensibility in your codebase.
+
+In Java, abstractions are typically created using **interfaces**. Implementations depend on these interfaces instead of each other, reducing coupling and making it easier to modify or replace behaviors without widespread code changes.
+
+---
+
+## 🌱 Why Abstraction Matters
+
+* ✔️ Makes components easier to swap or extend
+* ✔️ Reduces dependencies between concrete implementations
+* ✔️ Supports cleaner, testable architecture
+* ✔️ Allows different implementations to coexist without conflict
+
+Interfaces act as **contracts** between layers or components, ensuring that implementations follow the same behavior while remaining independent from each other.
+
+---
+
+## 🔌 Abstraction + Dependency Injection in Spring
+
+When using dependency injection, Spring understands abstraction naturally:
+
+If a bean depends on an **interface**, Spring searches its context for an instance of a class that implements that interface.
+
+Example (conceptual):
+
+```java
+public class PaymentProcessor {
+    private final PaymentService paymentService;
+
+    public PaymentProcessor(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
+}
+```
+
+Spring sees `PaymentService` (the abstraction) and injects a bean that implements it—assuming one is available.
+
+---
+
+## 🏷️ Using Stereotype Annotations
+
+Stereotype annotations (such as `@Component`, `@Service`, `@Repository`) tell Spring to create and register a class as a bean.
+
+Important rules:
+
+* You **only annotate concrete implementations**, never interfaces.
+* Spring scans and registers these implementations in the Application Context.
+* Spring will later inject them wherever their interface is required.
+
+---
+
+## 👥 Multiple Implementations of the Same Interface
+
+It’s common to have more than one implementation of an abstraction:
+
+```java
+public interface NotificationService { ... }
+
+@Service
+public class EmailNotificationService implements NotificationService { ... }
+
+@Service
+public class SmsNotificationService implements NotificationService { ... }
+```
+
+When Spring finds **multiple beans** that satisfy the same abstraction, it needs instructions to choose the correct one.
+
+### To resolve this, you can:
+
+---
+
+### ✔️ 1. Use `@Primary`
+
+Marks one implementation as the default injection candidate:
+
+```java
+@Primary
+@Service
+public class EmailNotificationService implements NotificationService { }
+```
+
+Now Spring will inject this implementation unless told otherwise.
+
+---
+
+### ✔️ 2. Use `@Qualifier`
+
+Names a specific bean so you can request it explicitly:
+
+```java
+@Service("smsService")
+public class SmsNotificationService implements NotificationService { }
+
+@Autowired
+public NotificationController(@Qualifier("smsService") NotificationService service) {
+    this.service = service;
+}
+```
+
+This approach is ideal when different implementations are required in different parts of the system.
+
+---
+
+## 🧠 Summary
+
+Abstraction is central to clean architecture, and Spring’s dependency injection system supports it seamlessly:
+
+* Use **interfaces** to decouple implementation details
+* Annotate **implementations**, not interfaces
+* Spring injects a bean that matches the requested abstraction
+* When multiple implementations exist, use:
+
+  * `@Primary` for default selection
+  * `@Qualifier` for explicit selection
+
+This practice leads to more flexible, modular, and maintainable Spring applications.
+
+---
+
+# 🔄 Bean Scope and Lifecycle
+
+In Spring, **bean scope** determines *how Spring manages the lifecycle of object instances*. Each scope defines the rules for how many instances of a bean exist and how they are created and consumed throughout the application.
+
+Spring provides two primary scopes for standard applications: **singleton** and **prototype**.
+
+---
+
+## 🟦 Singleton Scope (Default)
+
+A **singleton-scoped** bean means:
+
+* Spring creates **one single instance** of the bean for the entire application context.
+* That instance has a **unique bean name**, and whenever you refer to that name, Spring returns the same object.
+* By default, Spring instantiates singleton beans **eagerly**, meaning at context startup—unless explicitly configured for lazy initialization.
+
+### 🔥 Lazy vs Eager Initialization
+
+* **Eager (default):** Bean is created as soon as the context loads.
+* **Lazy:** Bean is created only when first requested.
+
+### 👥 Thread Safety Concerns
+
+Singleton beans may be accessed by multiple threads simultaneously.
+This means:
+
+* They should ideally be **immutable**, or
+* You must manage **thread synchronization** manually if mutable state exists.
+
+Singletons are the most commonly used bean type in Spring applications.
+
+---
+
+## 🟧 Prototype Scope
+
+A **prototype-scoped** bean behaves differently:
+
+* Spring associates the scope with the **bean type**, not the instance.
+* Spring creates a **new instance of the bean each time it is requested**.
+* This is useful for mutable objects or stateful components that should not be shared.
+
+Prototype beans are *not* fully lifecycle-managed.
+Spring only handles:
+
+1. Creation
+2. Dependency injection
+
+The rest (initialization, destruction, cleanup) becomes your responsibility.
+
+---
+
+## ⚠️ Beware: Injecting Prototype Beans Into Singleton Beans
+
+Injecting a prototype bean into a singleton bean creates a frequent design trap:
+
+```text
+Singleton bean A depends on prototype bean B
+```
+
+Spring resolves dependencies **once**, at creation time.
+So the singleton receives **only one instance** of the prototype bean—and it will reuse that same instance indefinitely.
+
+This defeats the purpose of using a prototype scope, whose whole point is to get **a fresh instance for every request**.
+
+This scenario is usually a **design smell**, unless you deliberately add special mechanisms (like `ObjectFactory`, `Provider`, or lookup methods) to request new prototype instances at runtime.
+
+---
+
+## 🧠 Summary
+
+* **Singleton (default):** One shared instance per context
+* **Prototype:** A new instance every time the bean is requested
+* Singleton beans should be immutable or thread-safe
+* Prototype beans are best for stateful or mutable objects
+* Avoid injecting a prototype bean into a singleton without a mechanism to fetch new instances
+* Beans can be created eagerly or lazily
+
+---
+
+# 🎯 Using Aspects with Spring AOP
+
+In Spring, **aspects** allow you to intercept method executions and attach behavior before, after, or even *in place of* the method’s logic. This technique—Aspect-Oriented Programming (AOP)—helps you **decouple cross-cutting concerns** from business logic, making your application more modular and maintainable.
+
+Common cross-cutting concerns include:
+
+* Logging
+* Security checks
+* Transaction management
+* Auditing
+* Performance monitoring
+
+---
+
+## 💡 Why Use Aspects?
+
+An aspect lets you define logic that executes during a method invocation **without modifying the method itself**.
+This keeps business code clean and focused, while support logic lives separately.
+
+However, aspects should be used carefully:
+
+* ✔️ They can simplify complex systems
+* ❗ Overuse or misuse makes code **harder to read and debug**
+* ✔️ Use them only when they genuinely improve structure or reduce duplication
+
+Spring itself uses AOP internally for major features like **transaction management** and **method-level security**.
+
+---
+
+## 🧩 Defining an Aspect in Spring
+
+To create an aspect:
+
+1. Annotate the class with `@Aspect`
+2. Ensure Spring creates a bean of that class (e.g., using `@Component` or a `@Bean` method)
+
+```java
+@Aspect
+@Component
+public class LoggingAspect { ... }
+```
+
+Spring must manage this object so it can weave the aspect behavior into method calls.
+
+---
+
+## 🎛️ Pointcuts & Advice
+
+To tell Spring **which methods** should be intercepted, you write **AspectJ pointcut expressions**.
+
+These pointcuts are used inside **advice annotations**, which define *when* the aspect runs.
+
+Spring provides five types of advice:
+
+### ✔️ `@Before`
+
+Runs *before* the method executes.
+
+### ✔️ `@After`
+
+Runs *after* the method completes (success or exception).
+
+### ✔️ `@AfterReturning`
+
+Runs *after* the method returns successfully.
+
+### ✔️ `@AfterThrowing`
+
+Runs *if the method throws an exception*.
+
+### ✔️ `@Around` (most powerful)
+
+Wraps the method execution.
+You can:
+
+* run logic before the method
+* run logic after the method
+* modify the return value
+* prevent the method from running
+* handle exceptions
+
+Most real-world aspects rely on **`@Around`** because of its flexibility.
+
+---
+
+## 🔗 Multiple Aspects and Ordering
+
+If several aspects apply to the same method:
+
+* All will run
+* The order may matter
+* You can control the execution priority using `@Order`
+
+```java
+@Order(1)
+@Aspect
+public class FirstAspect { ... }
+
+@Order(2)
+@Aspect
+public class SecondAspect { ... }
+```
+
+Lower numbers run first.
+
+Proper ordering is essential when aspects depend on each other (e.g., security before transactions).
+
+---
+
+## 🧠 Summary
+
+* Aspects allow code to run before, after, or instead of method execution
+* Use them to isolate cross-cutting concerns, but avoid overengineering
+* Define aspects using `@Aspect` and ensure the class is a Spring bean
+* Use AspectJ pointcut expressions and advice annotations to control behavior
+* `@Around` is the most flexible advice type
+* Use `@Order` to control the order when multiple aspects intercept the same method call
+
+---
