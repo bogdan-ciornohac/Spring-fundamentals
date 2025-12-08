@@ -610,3 +610,141 @@ Proper ordering is essential when aspects depend on each other (e.g., security b
 * Use `@Order` to control the order when multiple aspects intercept the same method call
 
 ---
+
+
+# 🌐 Spring Boot and Spring MVC
+
+Modern software increasingly relies on **web applications**, which users access through a browser instead of installing desktop software.
+To build such systems effectively, developers must understand:
+
+* how web applications communicate, and
+* how to implement the server-side logic that responds to HTTP requests.
+
+Spring provides powerful tools to build backend web applications, and **Spring Boot** simplifies the configuration and setup needed to get started.
+
+---
+
+## 🧩 What Is a Web Application?
+
+A web application has two major parts:
+
+### ✔️ Client Side (Frontend)
+
+* Runs in the user’s browser
+* Sends HTTP requests to the backend
+* Renders the results returned by the server
+
+### ✔️ Server Side (Backend)
+
+* Processes incoming requests
+* Executes business logic
+* Stores and retrieves data
+* Sends back HTTP responses
+
+---
+
+## 🚀 Spring Boot: Convention Over Configuration
+
+Spring Boot is a Spring ecosystem project designed to eliminate boilerplate configuration.
+It follows the **convention-over-configuration** principle:
+
+* Provides **default configurations** for common application needs
+* Reduces the amount of setup required
+* Lets you focus on implementation instead of framework wiring
+
+### ⭐ Dependency Starters
+
+Spring Boot introduces **dependency starters**—bundled dependency groups with compatible versions that supply a specific capability.
+
+Examples:
+
+* `spring-boot-starter-web` – HTTP server + Spring MVC
+* `spring-boot-starter-data-jpa` – JPA & database support
+* `spring-boot-starter-security` – security features
+
+Starters make it easy to add functionality without manually configuring dozens of libraries.
+
+---
+
+## 🏗️ Servlet Container
+
+To handle HTTP requests, a Java web application requires a **servlet container**, such as:
+
+* **Tomcat** (default in Spring Boot)
+* Jetty
+* Undertow
+
+A servlet container translates raw HTTP communication into Java method calls.
+This means you don’t need to manually implement low-level HTTP protocol handling.
+
+Spring Boot **autoconfigures** a servlet container for you, so your application runs as a ready-to-use web server.
+
+---
+
+## 🧭 Spring MVC: Managing HTTP Requests
+
+Spring Boot also autoconfigures Spring MVC, a framework built around the **Model–View–Controller** design pattern.
+
+Spring MVC provides:
+
+* Controllers
+* Request mappings
+* Response handling
+* Validation
+* Interceptors
+* View rendering
+
+Together with Spring Boot autoconfiguration, this enables you to write web use cases with **minimal setup**.
+
+---
+
+## 📄 Minimal Flow: From HTTP Request to Response
+
+Thanks to autoconfiguration, you only need:
+
+1. **A controller class** to handle web requests.
+2. **An HTML (or template) file** to render the response.
+
+Spring Boot handles everything else—loading the container, registering components, and wiring Spring MVC.
+
+---
+
+## 🕹️ Writing a Spring MVC Controller
+
+Spring uses annotations to define controllers and their actions.
+
+### ✔️ `@Controller`
+
+Marks a class as a Spring MVC controller.
+
+### ✔️ `@RequestMapping`
+
+Defines the URL and HTTP method (GET, POST, etc.) handled by a controller method.
+
+Example:
+
+```java
+@Controller
+public class HomeController {
+
+    @RequestMapping("/home")
+    public String homePage() {
+        return "home.html"; // returned view
+    }
+}
+```
+
+This minimal example shows the core of Spring MVC: mapping a request to a method and returning a response.
+
+---
+
+## 🧠 Summary
+
+* Web apps rely on browser–server communication through HTTP
+* Spring Boot simplifies backend development with autoconfiguration and starters
+* A servlet container (e.g., Tomcat) handles HTTP processing
+* Spring MVC manages request routing and response handling
+* Developers only need to write controllers and views for basic flows
+* `@Controller` and `@RequestMapping` are central annotations for building web endpoints
+
+---
