@@ -835,7 +835,7 @@ fetch('/users/1', { method: 'DELETE' });
 
 ---
 
-## 🧠 Summary (actualizat pentru `@RequestMapping`)
+## 🧠 Summary
 
 * Folosești un template engine pentru a crea pagini dinamice
 * Controller-ul trimite date către view pentru randare
