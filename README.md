@@ -749,98 +749,85 @@ This minimal example shows the core of Spring MVC: mapping a request to a method
 
 ---
 
-
 # 🛠️ Implementing Web Apps with Spring Boot and Spring MVC
 
-Modern web applications often rely on **dynamic pages**—views that change based on the data provided for each request. To build such applications with Spring Boot, Spring MVC provides the controller layer, while template engines help render dynamic content in the frontend.
-
-This chapter covers how to implement dynamic web pages, handle client input, and understand HTTP request semantics using Spring Boot and Spring MVC.
+Today’s web applications often rely on **dynamic pages**—views that change based on the data sent from the server. A dynamic view receives this variable data from a controller, which prepares the response based on the client’s request.
 
 ---
 
-## 🎨 Dynamic Views with Template Engines
+## 🎨 Dynamic Views Using Template Engines
 
-A **dynamic view** displays content that varies per request.
-To determine what to show, the view receives **data from the controller**, typically as part of the model.
-
-A simple way to render dynamic content is by using a **template engine**, such as:
-
-* **Thymeleaf** (most commonly used in Spring Boot)
-* Mustache
-* FreeMarker
-* JSP (historical option)
-
-A template engine integrates with Spring MVC and makes it easy to bind server-side data into HTML pages.
+A template engine (e.g., **Thymeleaf**, Mustache, FreeMarker, JSP) helps you easily bind server-side data into HTML pages.
+When a controller prepares the response, the template engine renders the HTML using the dynamic data it receives.
 
 ---
 
 ## 📤 Sending Data from Client to Server
 
-A client (browser) can send variable data to the backend through:
+A client can send data to the backend in two main ways:
 
-### ✔️ 1. **Request Parameters**
+### ✔️ Request parameters — optional data
 
-Used for optional or extra information.
-
-Controller example:
+Handled in Spring MVC using:
 
 ```java
-@GetMapping("/search")
-public String search(@RequestParam(required = false) String query) { ... }
+@RequestMapping("/search")
+public String search(@RequestParam(required = false) String query) {
+    ...
+}
 ```
 
-### ✔️ 2. **Path Variables**
+### ✔️ Path variables — **mandatory** data
 
-Used for **mandatory** data that identifies a specific resource.
-
-Example:
+Used when the path itself includes the information:
 
 ```java
-@GetMapping("/users/{id}")
-public String getUser(@PathVariable Long id) { ... }
+@RequestMapping("/users/{id}")
+public String getUser(@PathVariable Long id) {
+    ...
+}
 ```
 
-**Guideline:**
+**Regulă generală:**
 
-* Use **path variables** for required values
-* Use **request parameters** for optional values
+* Folosește **path variables** pentru valori obligatorii
+* Folosește **request parameters** pentru opționale
 
 ---
 
-## 🌍 Understanding HTTP Requests
+## 🌍 HTTP Methods and `@RequestMapping`
 
-Every HTTP request is identified by:
+Un request HTTP este identificat prin:
 
-1. A **path** (URL)
-2. An **HTTP method** (verb) that expresses the client's intention
+1. Un **path**
+2. Un **HTTP method** (GET, POST, PUT, PATCH, DELETE)
 
-### 🔑 Common HTTP Methods in Real Applications
+Dacă folosești doar `@RequestMapping`, specifici metoda în felul următor:
 
-| Method     | Meaning                                     |
-| ---------- | ------------------------------------------- |
-| **GET**    | Retrieve data without modifying the backend |
-| **POST**   | Create new data                             |
-| **PUT**    | Replace a data record entirely              |
-| **PATCH**  | Partially update an existing record         |
-| **DELETE** | Remove data                                 |
+```java
+@RequestMapping(value = "/users", method = RequestMethod.GET)
+public String listUsers() { ... }
 
-These methods are fundamental to building RESTful APIs and user-driven web features.
+@RequestMapping(value = "/users", method = RequestMethod.POST)
+public String createUser() { ... }
+
+@RequestMapping(value = "/users/{id}", method = RequestMethod.PUT)
+public String updateUser(@PathVariable Long id) { ... }
+
+@RequestMapping(value = "/users/{id}", method = RequestMethod.DELETE)
+public String deleteUser(@PathVariable Long id) { ... }
+```
 
 ---
 
-## 🌐 Using HTTP Methods in HTML Forms
+## 🌐 Forms vs HTTP Methods
 
-HTML forms (through a browser) support only:
+Browserele, prin formulare HTML, pot trimite doar:
 
 * **GET**
 * **POST**
 
-If your application needs to send **PUT**, **PATCH**, or **DELETE**, you must:
-
-* Use JavaScript (e.g., `fetch()`), or
-* Rely on frameworks/features that simulate these methods
-
-Example using JavaScript `fetch()`:
+Pentru PUT, PATCH sau DELETE, trebuie folosit JavaScript:
 
 ```javascript
 fetch('/users/1', { method: 'DELETE' });
@@ -848,11 +835,15 @@ fetch('/users/1', { method: 'DELETE' });
 
 ---
 
-## 🧠 Summary
+## 🧠 Summary (actualizat pentru `@RequestMapping`)
 
-* Dynamic views display data supplied by Spring MVC controllers
-* Template engines like Thymeleaf make rendering dynamic HTML simple
-* Use `@RequestParam` for optional data
-* Use `@PathVariable` for mandatory data
-* HTTP methods convey intentions such as retrieving, creating, updating, or deleting data
-* HTML forms natively support only GET and POST—JavaScript is needed for others
+* Folosești un template engine pentru a crea pagini dinamice
+* Controller-ul trimite date către view pentru randare
+* Pentru date trimise din browser:
+
+  * `@RequestParam` → opțional
+  * `@PathVariable` → obligatoriu
+* Acțiunile controllerului se definesc cu `@RequestMapping` + `method = RequestMethod.X`
+* HTML forms suportă doar GET și POST — pentru celelalte metode ai nevoie de JavaScript
+
+---
