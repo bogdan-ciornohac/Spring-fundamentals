@@ -751,14 +751,21 @@ This minimal example shows the core of Spring MVC: mapping a request to a method
 
 # 🛠️ Implementing Web Apps with Spring Boot and Spring MVC
 
-Today’s web applications often rely on **dynamic pages**—views that change based on the data sent from the server. A dynamic view receives this variable data from a controller, which prepares the response based on the client’s request.
+Modern web applications rely heavily on **dynamic pages**—views whose content changes depending on the data provided for each request.
+A dynamic view receives this variable data from a controller, which prepares the response based on client input.
 
 ---
 
 ## 🎨 Dynamic Views Using Template Engines
 
-A template engine (e.g., **Thymeleaf**, Mustache, FreeMarker, JSP) helps you easily bind server-side data into HTML pages.
-When a controller prepares the response, the template engine renders the HTML using the dynamic data it receives.
+A simple way to build dynamic pages in Spring MVC is by using a **template engine**, such as:
+
+* Thymeleaf (most common in Spring Boot)
+* Mustache
+* FreeMarker
+* JSP
+
+A template engine integrates with Spring MVC and renders HTML pages using the data sent from the controller.
 
 ---
 
@@ -766,9 +773,7 @@ When a controller prepares the response, the template engine renders the HTML us
 
 A client can send data to the backend in two main ways:
 
-### ✔️ Request parameters — optional data
-
-Handled in Spring MVC using:
+### ✔️ Request Parameters — optional data
 
 ```java
 @RequestMapping("/search")
@@ -777,9 +782,7 @@ public String search(@RequestParam(required = false) String query) {
 }
 ```
 
-### ✔️ Path variables — **mandatory** data
-
-Used when the path itself includes the information:
+### ✔️ Path Variables — mandatory data
 
 ```java
 @RequestMapping("/users/{id}")
@@ -788,21 +791,21 @@ public String getUser(@PathVariable Long id) {
 }
 ```
 
-**Regulă generală:**
+**Guideline:**
 
-* Folosește **path variables** pentru valori obligatorii
-* Folosește **request parameters** pentru opționale
+* Use **path variables** for required values
+* Use **request parameters** for optional values
 
 ---
 
 ## 🌍 HTTP Methods and `@RequestMapping`
 
-Un request HTTP este identificat prin:
+Every HTTP request is defined by:
 
-1. Un **path**
-2. Un **HTTP method** (GET, POST, PUT, PATCH, DELETE)
+1. A **path**
+2. An **HTTP method** (GET, POST, PUT, PATCH, DELETE)
 
-Dacă folosești doar `@RequestMapping`, specifici metoda în felul următor:
+Since you're using classic Spring MVC, methods are declared with `@RequestMapping` + `RequestMethod`:
 
 ```java
 @RequestMapping(value = "/users", method = RequestMethod.GET)
@@ -820,14 +823,14 @@ public String deleteUser(@PathVariable Long id) { ... }
 
 ---
 
-## 🌐 Forms vs HTTP Methods
+## 🌐 HTML Forms and HTTP Methods
 
-Browserele, prin formulare HTML, pot trimite doar:
+Browsers, through regular HTML forms, can submit only:
 
 * **GET**
 * **POST**
 
-Pentru PUT, PATCH sau DELETE, trebuie folosit JavaScript:
+To perform **PUT**, **PATCH**, or **DELETE**, you must trigger the request using JavaScript:
 
 ```javascript
 fetch('/users/1', { method: 'DELETE' });
@@ -835,15 +838,15 @@ fetch('/users/1', { method: 'DELETE' });
 
 ---
 
-## 🧠 Summary
+## 🧠 Summary (updated for `@RequestMapping`)
 
-* Folosești un template engine pentru a crea pagini dinamice
-* Controller-ul trimite date către view pentru randare
-* Pentru date trimise din browser:
+* Template engines allow Spring MVC apps to render dynamic HTML pages
+* Controllers provide data to views for dynamic rendering
+* Client data can be received via:
 
-  * `@RequestParam` → opțional
-  * `@PathVariable` → obligatoriu
-* Acțiunile controllerului se definesc cu `@RequestMapping` + `method = RequestMethod.X`
-* HTML forms suportă doar GET și POST — pentru celelalte metode ai nevoie de JavaScript
+  * `@RequestParam` → optional data
+  * `@PathVariable` → required data
+* Controller actions are mapped using `@RequestMapping` with `RequestMethod.X`
+* HTML forms support only GET and POST; JavaScript is required for other HTTP methods
 
 ---
