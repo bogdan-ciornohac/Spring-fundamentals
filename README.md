@@ -748,3 +748,111 @@ This minimal example shows the core of Spring MVC: mapping a request to a method
 * `@Controller` and `@RequestMapping` are central annotations for building web endpoints
 
 ---
+
+
+# 🛠️ Implementing Web Apps with Spring Boot and Spring MVC
+
+Modern web applications often rely on **dynamic pages**—views that change based on the data provided for each request. To build such applications with Spring Boot, Spring MVC provides the controller layer, while template engines help render dynamic content in the frontend.
+
+This chapter covers how to implement dynamic web pages, handle client input, and understand HTTP request semantics using Spring Boot and Spring MVC.
+
+---
+
+## 🎨 Dynamic Views with Template Engines
+
+A **dynamic view** displays content that varies per request.
+To determine what to show, the view receives **data from the controller**, typically as part of the model.
+
+A simple way to render dynamic content is by using a **template engine**, such as:
+
+* **Thymeleaf** (most commonly used in Spring Boot)
+* Mustache
+* FreeMarker
+* JSP (historical option)
+
+A template engine integrates with Spring MVC and makes it easy to bind server-side data into HTML pages.
+
+---
+
+## 📤 Sending Data from Client to Server
+
+A client (browser) can send variable data to the backend through:
+
+### ✔️ 1. **Request Parameters**
+
+Used for optional or extra information.
+
+Controller example:
+
+```java
+@GetMapping("/search")
+public String search(@RequestParam(required = false) String query) { ... }
+```
+
+### ✔️ 2. **Path Variables**
+
+Used for **mandatory** data that identifies a specific resource.
+
+Example:
+
+```java
+@GetMapping("/users/{id}")
+public String getUser(@PathVariable Long id) { ... }
+```
+
+**Guideline:**
+
+* Use **path variables** for required values
+* Use **request parameters** for optional values
+
+---
+
+## 🌍 Understanding HTTP Requests
+
+Every HTTP request is identified by:
+
+1. A **path** (URL)
+2. An **HTTP method** (verb) that expresses the client's intention
+
+### 🔑 Common HTTP Methods in Real Applications
+
+| Method     | Meaning                                     |
+| ---------- | ------------------------------------------- |
+| **GET**    | Retrieve data without modifying the backend |
+| **POST**   | Create new data                             |
+| **PUT**    | Replace a data record entirely              |
+| **PATCH**  | Partially update an existing record         |
+| **DELETE** | Remove data                                 |
+
+These methods are fundamental to building RESTful APIs and user-driven web features.
+
+---
+
+## 🌐 Using HTTP Methods in HTML Forms
+
+HTML forms (through a browser) support only:
+
+* **GET**
+* **POST**
+
+If your application needs to send **PUT**, **PATCH**, or **DELETE**, you must:
+
+* Use JavaScript (e.g., `fetch()`), or
+* Rely on frameworks/features that simulate these methods
+
+Example using JavaScript `fetch()`:
+
+```javascript
+fetch('/users/1', { method: 'DELETE' });
+```
+
+---
+
+## 🧠 Summary
+
+* Dynamic views display data supplied by Spring MVC controllers
+* Template engines like Thymeleaf make rendering dynamic HTML simple
+* Use `@RequestParam` for optional data
+* Use `@PathVariable` for mandatory data
+* HTTP methods convey intentions such as retrieving, creating, updating, or deleting data
+* HTML forms natively support only GET and POST—JavaScript is needed for others
