@@ -838,7 +838,7 @@ fetch('/users/1', { method: 'DELETE' });
 
 ---
 
-## 🧠 Summary (updated for `@RequestMapping`)
+## 🧠 Summary 
 
 * Template engines allow Spring MVC apps to render dynamic HTML pages
 * Controllers provide data to views for dynamic rendering
@@ -850,3 +850,101 @@ fetch('/users/1', { method: 'DELETE' });
 * HTML forms support only GET and POST; JavaScript is required for other HTTP methods
 
 ---
+# 🌐 Using the Spring Web Scopes
+
+Beyond the standard **singleton** and **prototype** scopes (discussed in earlier chapters), Spring provides three additional scopes that apply **exclusively to web applications**. These scopes help you manage bean lifecycles tied to HTTP requests and sessions.
+
+These are known as **Spring Web Scopes**:
+
+---
+
+## 🟦 1. Request Scope
+
+**Definition:**
+A new instance of the bean is created **for each HTTP request**.
+
+**Characteristics:**
+
+* One instance *per request*
+* Automatically cleaned up when the request finishes
+* Ideal for storing request-specific data
+* No concurrency concerns—each bean instance is accessed by a single request only
+
+**Design considerations:**
+
+* Avoid heavy initialization in constructors or `@PostConstruct`
+  → Request-scoped beans are created very often.
+
+---
+
+## 🟧 2. Session Scope
+
+**Definition:**
+One bean instance is created **per HTTP session**, meaning multiple requests from the same user can share the same instance.
+
+**Characteristics:**
+
+* Shared across requests from the same client session
+* Useful for storing data that persists across multiple interactions
+* Not shared between different users
+
+**Concurrency warning:**
+Even if the requests come from the same user, the browser may send **parallel requests**.
+If these modify the session-scoped bean, **race conditions** can occur.
+
+You must either:
+
+* avoid concurrent writes, or
+* synchronize access to mutable state
+
+---
+
+## 🟥 3. Application Scope
+
+**Definition:**
+A single bean instance exists **for the entire lifetime of the web application**, shared across all clients and all requests.
+
+**Characteristics:**
+
+* Global to the whole application
+* Never garbage-collected while the app runs
+* Every request from any client accesses the same instance
+
+**Recommendation:**
+Avoid application-scoped beans.
+
+Why?
+
+* Any write requires synchronization → performance bottlenecks
+* Long-lived objects → increased memory pressure
+* Encourages a stateful architecture → harder to scale
+
+A better approach is to store shared data in a **database**, not in application-scoped beans.
+
+---
+
+## ⚠️ Stateful Applications & Architectural Concerns
+
+Both session-scoped and application-scoped beans introduce **shared state**, meaning:
+
+* Requests become less independent
+* The application becomes **stateful**
+
+Stateful applications can suffer from:
+
+* Concurrency issues
+* Scalability limitations
+* Complex debugging and deployment behavior
+
+While these topics go beyond the scope of this chapter, it is important to understand that **minimizing shared state leads to more resilient and scalable systems**.
+
+---
+
+## 🧠 Summary
+
+| Scope           | Lifecycle         | Shared By                        | Recommended Usage                                 |
+| --------------- | ----------------- | -------------------------------- | ------------------------------------------------- |
+| **Request**     | Per HTTP request  | Nobody (isolated)                | Request-specific data                             |
+| **Session**     | Per user session  | Multiple requests from same user | User interaction state (careful with concurrency) |
+| **Application** | Whole application | All clients                      | Generally avoid; store shared data in DB instead  |
+
