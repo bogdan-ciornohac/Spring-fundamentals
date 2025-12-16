@@ -115,3 +115,14 @@ public class MyService {
 ```
 
 👉 **Takeaway:** Prefer **constructor injection**. It’s safer, guarantees required dependencies, works without `@Autowired`, and keeps fields immutable.
+
+---
+
+### ⚠️ **Floating-Point Precision**
+
+If you need to store and operate on decimal values **without losing precision** (e.g., money, measurements, or calculations requiring exact results), **do not use `float` or `double`**.
+
+Floating-point types can introduce rounding errors due to how they’re represented in binary.
+
+✅ **Use `BigDecimal` instead** to preserve decimal accuracy across calculations.
+

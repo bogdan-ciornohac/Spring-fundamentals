@@ -948,3 +948,378 @@ While these topics go beyond the scope of this chapter, it is important to under
 | **Session**     | Per user session  | Multiple requests from same user | User interaction state (careful with concurrency) |
 | **Application** | Whole application | All clients                      | Generally avoid; store shared data in DB instead  |
 
+---
+
+# 🌐 Implementing REST Services
+
+Representational State Transfer (**REST**) is a simple and widely adopted architectural style for enabling communication between different applications. Spring provides first-class support for implementing RESTful web services through **Spring MVC**.
+
+This chapter describes how to create REST endpoints, return HTTP responses, structure REST controllers, and handle exceptions effectively.
+
+---
+
+## 🚀 Building REST Endpoints with Spring MVC
+
+To expose a REST endpoint, Spring must know that your controller’s methods return **data**, not HTML views. There are two ways to inform Spring of this:
+
+### ✔️ Option 1: Use `@ResponseBody` on the method
+
+```java
+@Controller
+public class HelloController {
+
+    @RequestMapping("/hello")
+    @ResponseBody
+    public String hello() {
+        return "Hello World!";
+    }
+}
+```
+
+`@ResponseBody` tells Spring to write the return value directly into the HTTP response body.
+
+---
+
+### ✔️ Option 2: Use `@RestController` on the class
+
+```java
+@RestController
+public class HelloController {
+
+    @RequestMapping("/hello")
+    public String hello() {
+        return "Hello World!";
+    }
+}
+```
+
+`@RestController` is a convenience annotation that combines:
+
+* `@Controller`
+* `@ResponseBody`
+
+Using neither of these tells Spring to treat the return value as a **view name**, causing the dispatcher servlet to search for a view template.
+
+---
+
+## 📤 Returning HTTP Responses
+
+### ✔️ Relying on Spring's default behavior
+
+A controller method can return the response body directly:
+
+```java
+@RequestMapping("/greet")
+public String greet() {
+    return "Hi!";
+}
+```
+
+Spring selects the appropriate HTTP status code automatically.
+
+---
+
+### ✔️ Customizing the response: `ResponseEntity`
+
+If you need full control over:
+
+* HTTP status code
+* Headers
+* Response body
+
+you can return a `ResponseEntity`:
+
+```java
+@RequestMapping("/status")
+public ResponseEntity<String> customStatus() {
+    return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .header("X-Custom-Header", "Test")
+        .body("Resource created");
+}
+```
+
+---
+
+## ⚠️ Handling Exceptions
+
+### ✔️ Approach 1: Handle exceptions inside the controller method
+
+This keeps error handling close to the logic but may duplicate code across methods.
+
+### ✔️ Approach 2: Use a REST controller advice
+
+A **global exception handler** keeps error handling clean and reusable.
+
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFound(NotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+}
+```
+
+This approach decouples exception processing from controller logic and avoids repetition.
+
+---
+
+## 📥 Getting Data From the Client
+
+A REST endpoint can receive data through:
+
+* **Request parameters**
+
+  ```java
+  @RequestParam String filter
+  ```
+
+* **Path variables**
+
+  ```java
+  @PathVariable Long id
+  ```
+
+* **Request body**
+
+  ```java
+  @RequestBody UserDto user
+  ```
+
+Each mechanism serves different use cases depending on whether data is optional, required, or complex.
+
+---
+
+## 🧠 Summary
+
+* REST enables simple communication between applications
+* Use `@ResponseBody` or `@RestController` to build REST endpoints
+* Spring can return the HTTP response body directly or through `ResponseEntity`
+* Exceptions can be handled locally or globally using a controller advice
+* Clients can send data via request parameters, path variables, or the request body
+
+---
+
+# 🌐 Consuming REST Endpoints
+
+In real-world backend architectures, it is common for one backend application to communicate with another by calling its exposed REST endpoints. Spring provides multiple tools to help you implement the **client side** of a REST service.
+
+This chapter introduces the most relevant solutions and helps you understand when to use each one.
+
+---
+
+## 🔌 Options for Calling REST Endpoints in Spring
+
+Spring offers several mechanisms for consuming REST APIs. The three most important ones today are:
+
+---
+
+## 🟦 1. OpenFeign (Spring Cloud)
+
+**OpenFeign** is a declarative HTTP client provided through the **Spring Cloud** ecosystem.
+
+### ✔️ Key features:
+
+* Minimal boilerplate—define an interface, and Feign generates the REST client
+* Built-in support for:
+
+  * Load balancing
+  * Resilience (when combined with Spring Cloud components)
+  * Request/response logging
+  * Interceptors
+* Ideal for microservices and distributed systems
+
+Feign significantly simplifies the code needed to consume REST endpoints.
+
+---
+
+## 🟧 2. RestTemplate (Legacy)
+
+**RestTemplate** has been the traditional way to call REST endpoints in Spring applications.
+
+However:
+
+> ❗ You should **not use RestTemplate in new applications**.
+> It is in maintenance mode and will not receive major new features.
+
+Existing codebases may still use it, but modern implementations should prefer Feign or WebClient.
+
+---
+
+## 🟩 3. WebClient (Reactive)
+
+**WebClient** is Spring’s modern HTTP client built for **reactive applications**.
+
+### ✔️ Benefits:
+
+* Fully non-blocking
+* Supports functional reactive programming with Project Reactor
+* High performance for concurrent or streaming workloads
+
+### ❗ Important:
+
+WebClient is excellent, but **only for applications designed around a reactive programming model**.
+Using it in a nonreactive application adds unnecessary complexity.
+
+---
+
+## 🎯 Choosing the Right Tool
+
+Choosing between Feign and WebClient depends on the architecture of your app:
+
+### ✔️ For standard, nonreactive Spring Boot applications
+
+**Use OpenFeign.**
+It offers the cleanest API, the easiest configuration, and strong ecosystem support.
+
+### ✔️ For reactive applications
+
+**Use WebClient.**
+It takes full advantage of non-blocking IO and reactive pipelines.
+
+### ❌ Avoid RestTemplate for new work
+
+Although simple, it is no longer the preferred approach in modern Spring development.
+
+---
+
+## 🧠 Summary
+
+* Backend services often need to consume REST endpoints exposed by other services
+* Spring provides several HTTP clients: OpenFeign, RestTemplate, and WebClient
+* **OpenFeign** → best choice for standard (blocking) applications
+* **WebClient** → best choice for reactive applications
+* **RestTemplate** → legacy; avoid using in new implementations
+
+---
+
+# 💾 Using Data Sources in Spring Apps
+
+Most real-world applications need to store and retrieve data from a relational database. In Java, the Java Development Kit (JDK) provides the foundational **JDBC abstractions** required to interact with databases. However, your application also needs a **JDBC driver**—a runtime dependency that provides the actual implementation for connecting to a specific database (MySQL, PostgreSQL, Oracle, etc.).
+
+To manage database connections efficiently, Spring Boot and Spring Framework offer tools that simplify and optimize JDBC usage.
+
+---
+
+## 🏗️ What Is a Data Source?
+
+A **data source** is an object that manages the creation and pooling of connections to a database server.
+
+Without a data source:
+
+* Each operation would open a new database connection
+* Opening connections repeatedly is slow
+* Performance would degrade quickly
+
+A data source ensures your application uses a **connection pool**, reusing existing connections instead of creating new ones.
+
+---
+
+## ⚡ HikariCP — Spring Boot’s Default Data Source
+
+Spring Boot automatically configures a high-performance connection pool called **HikariCP**.
+
+### Benefits of HikariCP:
+
+* Efficient connection reuse
+* Reliable performance under high load
+* Minimal configuration required
+
+You can replace HikariCP with another implementation (e.g., Apache DBCP, Tomcat JDBC Pool) if your application has special requirements.
+
+---
+
+## 🛠️ Working with JdbcTemplate
+
+`JdbcTemplate` is a Spring-provided utility that simplifies JDBC operations.
+
+It depends on a `DataSource` to establish connections and allows you to:
+
+### ✔️ Update data
+
+Use the `update()` method for INSERT, UPDATE, or DELETE statements:
+
+```java
+jdbcTemplate.update("INSERT INTO users(name) VALUES(?)", "Alice");
+```
+
+### ✔️ Query data
+
+Use one of the `query()` methods to run SELECT queries and map results:
+
+```java
+List<User> users = jdbcTemplate.query(
+    "SELECT * FROM users",
+    (rs, rowNum) -> new User(rs.getLong("id"), rs.getString("name"))
+);
+```
+
+`JdbcTemplate` removes boilerplate code like manually opening/closing connections, handling exceptions, and iterating through result sets.
+
+---
+
+## 🔧 Customizing the Data Source and JdbcTemplate
+
+Spring Boot auto-configures the default `DataSource` and `JdbcTemplate`.
+However, you can override these defaults by declaring your own beans:
+
+### Custom Data Source
+
+```java
+@Bean
+public DataSource customDataSource() {
+    // custom configuration
+}
+```
+
+If Spring finds a custom `DataSource` bean, it uses it instead of the default HikariCP configuration.
+
+### Custom JdbcTemplate
+
+```java
+@Bean
+public JdbcTemplate customJdbcTemplate(DataSource dataSource) {
+    return new JdbcTemplate(dataSource);
+}
+```
+
+Custom configurations are useful when:
+
+* Connecting to nonstandard databases
+* Needing performance tuning
+* Using specialized connection pool settings
+
+---
+
+## 🗄️ Using Multiple Data Sources
+
+If your application needs to connect to **more than one database**, you can:
+
+1. Define multiple `DataSource` beans
+2. Define one `JdbcTemplate` per data source
+3. Use `@Qualifier` to disambiguate
+
+Example:
+
+```java
+@Autowired
+public JdbcTemplate(
+    @Qualifier("ordersDataSource") DataSource ds
+) { ... }
+```
+
+This follows the same pattern described in earlier chapters about handling multiple beans of the same type.
+
+---
+
+## 🧠 Summary
+
+* JDBC requires a **JDBC driver** to connect to a relational database
+* A **data source** manages database connections and improves performance via pooling
+* Spring Boot uses **HikariCP** by default but allows full customization
+* **JdbcTemplate** simplifies database operations for both updates and queries
+* You can override default configurations by defining your own `DataSource` or `JdbcTemplate` beans
+* Multiple data sources require qualifiers to distinguish them
+
