@@ -1323,3 +1323,203 @@ This follows the same pattern described in earlier chapters about handling multi
 * You can override default configurations by defining your own `DataSource` or `JdbcTemplate` beans
 * Multiple data sources require qualifiers to distinguish them
 
+---
+
+# 🔒 Using Transactions in Spring Apps
+
+A **transaction** is a group of data-changing operations that must either **all succeed** or **all fail together**. This all-or-nothing behavior ensures data consistency, even when unexpected errors occur. In real-world applications, almost every use case that modifies persistent data should run inside a transaction.
+
+---
+
+## 🧩 What Happens in a Transaction?
+
+### ✔️ Commit
+
+If **all operations** succeed, the transaction **commits**.
+This means the application permanently saves the changes made during the use case.
+
+### ✔️ Rollback
+
+If **any operation fails**, Spring restores the database to its original state from before the transaction started.
+This is called a **rollback**.
+
+Rollback protects your application from partial updates, inconsistent states, and corrupted data.
+
+---
+
+## 🛠️ Using `@Transactional` in Spring
+
+Spring makes implementing transactional behavior extremely simple through the `@Transactional` annotation.
+
+You can apply `@Transactional` to:
+
+### ✔️ A Method
+
+Marks that specific method to run inside a transaction.
+
+```java
+@Transactional
+public void processOrder() {
+    // all operations here are part of the same transaction
+}
+```
+
+### ✔️ A Class
+
+All methods in the class become transactional.
+
+```java
+@Transactional
+public class OrderService {
+    ...
+}
+```
+
+Annotating the class is useful when **all operations** in the service are expected to participate in transactions.
+
+---
+
+## ⚙️ How Spring Implements Transactions
+
+When your application runs, **Spring AOP** handles the transactional behavior behind the scenes.
+
+Here’s what happens:
+
+1. A Spring **aspect** intercepts calls to methods annotated with `@Transactional`.
+2. The aspect **starts a new transaction** before the method runs.
+3. If the method **throws an exception**, the aspect **rolls back** the transaction.
+4. If the method completes **without throwing an exception**, the aspect **commits** the transaction.
+
+This mechanism lets you focus on writing business logic without manually managing database transactions.
+
+---
+
+## 🧠 Summary
+
+* A transaction groups data-changing operations into a single atomic unit
+* Spring commits the transaction if everything succeeds
+* Spring rolls back the transaction if any exception occurs
+* Use `@Transactional` on methods or classes to mark them transactional
+* Spring uses AOP aspects to start, commit, and roll back transactions automatically
+
+---
+
+# 🗄️ Implementing Data Persistence with Spring Data
+
+**Spring Data** is a powerful project in the Spring ecosystem that simplifies the implementation of the persistence layer in Spring applications. It provides a unified abstraction over various persistence technologies and offers a consistent set of repository contracts, reducing boilerplate and improving maintainability.
+
+---
+
+## 🌱 Spring Data Repository Abstractions
+
+Spring Data allows you to implement repositories simply by defining **interfaces** that extend predefined contracts. These contracts determine the operations your repository can perform.
+
+### ✔️ `Repository`
+
+* The base marker interface
+* Does **not** provide CRUD operations
+* Used mainly to define custom sets of behavior
+
+### ✔️ `CrudRepository`
+
+* Extends `Repository`
+* Provides standard **CREATE, READ, UPDATE, DELETE (CRUD)** operations
+
+### ✔️ `PagingAndSortingRepository`
+
+* Extends `CrudRepository`
+* Adds built-in support for:
+
+  * Pagination
+  * Sorting
+
+These abstractions eliminate the need to write repetitive persistence logic.
+
+---
+
+## 🧩 Choosing the Correct Spring Data Module
+
+Spring Data supports multiple persistence technologies through specialized modules.
+Choose the module that matches your database technology:
+
+* **Spring Data JDBC** → relational databases via JDBC
+* **Spring Data JPA** → relational databases using JPA/Hibernate
+* **Spring Data MongoDB** → MongoDB
+* **Spring Data Redis** → Redis
+* Others exist for Cassandra, Neo4j, Elasticsearch, and more
+
+Each module implements the repository contracts in a way that fits the underlying technology.
+
+---
+
+## 🛠️ Defining Custom Repository Methods
+
+When you extend a Spring Data repository contract, your repository automatically inherits the provided operations.
+You can also define **custom methods** in the interface.
+
+There are **two** ways to implement custom queries:
+
+---
+
+## 1️⃣ Using `@Query` Annotation (Recommended)
+
+```java
+@Query("SELECT * FROM users WHERE email = :email")
+User findByEmail(String email);
+```
+
+Advantages:
+
+* Clear, explicit SQL or JPQL
+* Easy to maintain
+* No method name translation required
+* Less risk during refactoring
+
+This is the **preferred** approach for custom operations.
+
+---
+
+## 2️⃣ Relying on Method Name Query Derivation (Not Recommended)
+
+Spring Data can translate certain method names into SQL/JPQL queries:
+
+```java
+User findByEmailAndStatus(String email, Status status);
+```
+
+However, this approach has drawbacks:
+
+* Long and unreadable method names for complex queries
+* Slower application startup due to method name parsing
+* Requires learning naming conventions
+* Risky during refactoring—renaming a method can cause runtime failures
+
+If Spring Data cannot interpret the method name, the application **fails to start**.
+
+Because of these issues, it's generally better to use `@Query`.
+
+---
+
+## ⚠️ Modifying Operations Require `@Modifying`
+
+Any operation that **changes data**—such as INSERT, UPDATE, or DELETE—must be annotated with:
+
+```java
+@Modifying
+@Query("UPDATE users SET active = false WHERE id = :id")
+void deactivateUser(Long id);
+```
+
+`@Modifying` tells Spring Data that the method performs a write operation rather than a SELECT query.
+
+---
+
+## 🧠 Summary
+
+* Spring Data simplifies persistence through repository abstractions
+* Extend `Repository`, `CrudRepository`, or `PagingAndSortingRepository` depending on your needs
+* Choose the Spring Data module based on your database technology
+* Use `@Query` to clearly define custom queries
+* Avoid relying on method name query derivation for complex operations
+* Use `@Modifying` for any repository method that changes data
+

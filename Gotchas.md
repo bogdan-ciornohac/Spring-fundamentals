@@ -126,3 +126,22 @@ Floating-point types can introduce rounding errors due to how they’re represen
 
 ✅ **Use `BigDecimal` instead** to preserve decimal accuracy across calculations.
 
+---
+**⚠️ `@Transactional` Overrides**
+
+If you annotate **both a class and its methods** with `@Transactional`, be aware that **the method-level annotation takes precedence**.
+
+This means any configuration on the method (e.g. propagation, isolation, read-only, rollback rules) will **override** the class-level settings for that method.
+
+```java
+@Transactional(readOnly = true)
+public class UserService {
+
+    @Transactional
+    public void updateUser(User user) {
+        // NOT read-only — method-level config wins
+    }
+}
+```
+
+👉 Use method-level annotations intentionally, as they can silently change transactional behavior defined at the class level.
