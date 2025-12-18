@@ -8,19 +8,19 @@
 # 📚 Table of Contents — Spring Fundamentals
 
 1. **[Defining Beans in Spring](#defining-beans-in-spring)**
-2. **[Wiring Beans in Spring](#-wiring-beans-in-spring)**
-3. **[Using Abstraction in Spring](#-using-abstraction-in-spring)**
-4. **[Bean Scope and Lifecycle](#-bean-scope-and-lifecycle)**
-5. **[Using Aspects with Spring AOP](#-using-aspects-with-spring-aop)**
-6. **[Spring Boot and Spring MVC](#-spring-boot-and-spring-mvc)**
-7. **[Implementing Web Apps with Spring Boot and Spring MVC](#-implementing-web-apps-with-spring-boot-and-spring-mvc)**
-8. **[Using the Spring Web Scopes](#-using-the-spring-web-scopes)**
-9. **[Implementing REST Services](#-implementing-rest-services)**
-10. **[Consuming REST Endpoints](#-consuming-rest-endpoints)**
-11. **[Using Data Sources in Spring Apps](#-using-data-sources-in-spring-apps)**
-12. **[Using Transactions in Spring Apps](#-using-transactions-in-spring-apps)**
-13. **[Implementing Data Persistence with Spring Data](#-implementing-data-persistence-with-spring-data)**
-14. **[Testing Your Spring App](#-testing-your-spring-app)**
+2. **[Wiring Beans in Spring](#wiring-beans-in-spring)**
+3. **[Using Abstraction in Spring](#using-abstraction-in-spring)**
+4. **[Bean Scope and Lifecycle](#bean-scope-and-lifecycle)**
+5. **[Using Aspects with Spring AOP](#using-aspects-with-spring-aop)**
+6. **[Spring Boot and Spring MVC](#spring-boot-and-spring-mvc)**
+7. **[Implementing Web Apps with Spring Boot and Spring MVC](#implementing-web-apps-with-spring-boot-and-spring-mvc)**
+8. **[Using the Spring Web Scopes](#using-the-spring-web-scopes)**
+9. **[Implementing REST Services](#implementing-rest-services)**
+10. **[Consuming REST Endpoints](#consuming-rest-endpoints)**
+11. **[Using Data Sources in Spring Apps](#using-data-sources-in-spring-apps)**
+12. **[Using Transactions in Spring Apps](#using-transactions-in-spring-apps)**
+13. **[Implementing Data Persistence with Spring Data](#implementing-data-persistence-with-spring-data)**
+14. **[Testing Your Spring App](#testing-your-spring-app)**
 
 ---
 
@@ -155,7 +155,7 @@ applicationContext.registerBean(CustomService.class, CustomService::new);
 ---
 
 
-# 🌿 Wiring Beans in Spring
+#  Wiring Beans in Spring
 
 In Spring, the **Application Context** is the area in memory where the framework stores and manages all the objects (beans) it controls.
 Any object that needs to benefit from Spring’s features—configuration, lifecycle management, dependency injection—must be registered as a **bean** within this context.
@@ -314,7 +314,7 @@ Useful when different configurations of the same type coexist (e.g., multiple da
 
 ---
 
-# 🧩 Using Abstraction in Spring
+#  Using Abstraction in Spring
 
 Decoupling your application logic through abstractions is one of the most powerful design practices in software development. By separating **what** a class does (the contract) from **how** it does it (the implementation), you gain flexibility, maintainability, and extensibility in your codebase.
 
@@ -435,7 +435,7 @@ This practice leads to more flexible, modular, and maintainable Spring applicati
 
 ---
 
-# 🔄 Bean Scope and Lifecycle
+#  Bean Scope and Lifecycle
 
 In Spring, **bean scope** determines *how Spring manages the lifecycle of object instances*. Each scope defines the rules for how many instances of a bean exist and how they are created and consumed throughout the application.
 
@@ -514,7 +514,7 @@ This scenario is usually a **design smell**, unless you deliberately add special
 
 ---
 
-# 🎯 Using Aspects with Spring AOP
+#  Using Aspects with Spring AOP
 
 In Spring, **aspects** allow you to intercept method executions and attach behavior before, after, or even *in place of* the method’s logic. This technique—Aspect-Oriented Programming (AOP)—helps you **decouple cross-cutting concerns** from business logic, making your application more modular and maintainable.
 
@@ -635,7 +635,7 @@ Proper ordering is essential when aspects depend on each other (e.g., security b
 ---
 
 
-# 🌐 Spring Boot and Spring MVC
+#  Spring Boot and Spring MVC
 
 Modern software increasingly relies on **web applications**, which users access through a browser instead of installing desktop software.
 To build such systems effectively, developers must understand:
@@ -772,7 +772,7 @@ This minimal example shows the core of Spring MVC: mapping a request to a method
 
 ---
 
-# 🛠️ Implementing Web Apps with Spring Boot and Spring MVC
+#  Implementing Web Apps with Spring Boot and Spring MVC
 
 Modern web applications rely heavily on **dynamic pages**—views whose content changes depending on the data provided for each request.
 A dynamic view receives this variable data from a controller, which prepares the response based on client input.
@@ -873,7 +873,7 @@ fetch('/users/1', { method: 'DELETE' });
 * HTML forms support only GET and POST; JavaScript is required for other HTTP methods
 
 ---
-# 🌐 Using the Spring Web Scopes
+#  Using the Spring Web Scopes
 
 Beyond the standard **singleton** and **prototype** scopes (discussed in earlier chapters), Spring provides three additional scopes that apply **exclusively to web applications**. These scopes help you manage bean lifecycles tied to HTTP requests and sessions.
 
@@ -973,7 +973,7 @@ While these topics go beyond the scope of this chapter, it is important to under
 
 ---
 
-# 🌐 Implementing REST Services
+#  Implementing REST Services
 
 Representational State Transfer (**REST**) is a simple and widely adopted architectural style for enabling communication between different applications. Spring provides first-class support for implementing RESTful web services through **Spring MVC**.
 
@@ -1125,7 +1125,7 @@ Each mechanism serves different use cases depending on whether data is optional,
 
 ---
 
-# 🌐 Consuming REST Endpoints
+#  Consuming REST Endpoints
 
 In real-world backend architectures, it is common for one backend application to communicate with another by calling its exposed REST endpoints. Spring provides multiple tools to help you implement the **client side** of a REST service.
 
@@ -1218,7 +1218,7 @@ Although simple, it is no longer the preferred approach in modern Spring develop
 
 ---
 
-# 💾 Using Data Sources in Spring Apps
+#  Using Data Sources in Spring Apps
 
 Most real-world applications need to store and retrieve data from a relational database. In Java, the Java Development Kit (JDK) provides the foundational **JDBC abstractions** required to interact with databases. However, your application also needs a **JDBC driver**—a runtime dependency that provides the actual implementation for connecting to a specific database (MySQL, PostgreSQL, Oracle, etc.).
 
@@ -1348,7 +1348,7 @@ This follows the same pattern described in earlier chapters about handling multi
 
 ---
 
-# 🔒 Using Transactions in Spring Apps
+#  Using Transactions in Spring Apps
 
 A **transaction** is a group of data-changing operations that must either **all succeed** or **all fail together**. This all-or-nothing behavior ensures data consistency, even when unexpected errors occur. In real-world applications, almost every use case that modifies persistent data should run inside a transaction.
 
@@ -1427,7 +1427,7 @@ This mechanism lets you focus on writing business logic without manually managin
 
 ---
 
-# 🗄️ Implementing Data Persistence with Spring Data
+#  Implementing Data Persistence with Spring Data
 
 **Spring Data** is a powerful project in the Spring ecosystem that simplifies the implementation of the persistence layer in Spring applications. It provides a unified abstraction over various persistence technologies and offers a consistent set of repository contracts, reducing boilerplate and improving maintainability.
 
@@ -1548,7 +1548,7 @@ void deactivateUser(Long id);
 
 ---
 
-# 🧪 Testing Your Spring App
+#  Testing Your Spring App
 
 Testing is an essential part of software development. A **test** is a small piece of code written to validate the behavior of a particular part of your application. Tests help ensure that new changes do not break existing functionality and act as living documentation for how your code is intended to behave.
 
@@ -1638,4 +1638,3 @@ This pattern keeps tests clean, readable, and easy to maintain.
 * **Integration tests** validate how components work together
 * Use **mocks** to remove unwanted dependencies during tests
 * A well-structured test follows: **Arrange → Act → Assert**
-
