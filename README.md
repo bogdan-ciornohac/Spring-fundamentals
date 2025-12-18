@@ -5,20 +5,22 @@
 
 # 📚 Table of Contents — Spring Fundamentals
 
-1. **[Defining Beans](#defining-beans)**
-2. **[Wiring Beans](#wiring-beans)**
-3. **[Using Abstraction](#using-abstraction)**
-4. **[Bean Scope and Lifecycle](#bean-scope-and-lifecycle)**
-5. **[Using Aspects with Spring AOP](#using-aspects-with-spring-aop)**
-6. **[Spring Boot and Spring MVC](#spring-boot-and-spring-mvc)**
-7. **[Implementing Web Apps with Spring Boot and Spring MVC](#implementing-web-apps-with-spring-boot-and-spring-mvc)**
-8. **[Using the Spring Web Scopes](#using-the-spring-web-scopes)**
-9. **[Implementing REST Services](#implementing-rest-services)**
-10. **[Consuming REST Endpoints](#consuming-rest-endpoints)**
-11. **[Using Data Sources in Spring Apps](#using-data-sources-in-spring-apps)**
-12. **[Using Transactions in Spring Apps](#using-transactions-in-spring-apps)**
-13. **[Implementing Data Persistence with Spring Data](#implementing-data-persistence-with-spring-data)**
-14. **[Testing Your Spring App](#testing-your-spring-app)**
+# 📚 Table of Contents — Spring Fundamentals
+
+1. **[Defining Beans in Spring](#defining-beans-in-spring)**
+2. **[Wiring Beans in Spring](#-wiring-beans-in-spring)**
+3. **[Using Abstraction in Spring](#-using-abstraction-in-spring)**
+4. **[Bean Scope and Lifecycle](#-bean-scope-and-lifecycle)**
+5. **[Using Aspects with Spring AOP](#-using-aspects-with-spring-aop)**
+6. **[Spring Boot and Spring MVC](#-spring-boot-and-spring-mvc)**
+7. **[Implementing Web Apps with Spring Boot and Spring MVC](#-implementing-web-apps-with-spring-boot-and-spring-mvc)**
+8. **[Using the Spring Web Scopes](#-using-the-spring-web-scopes)**
+9. **[Implementing REST Services](#-implementing-rest-services)**
+10. **[Consuming REST Endpoints](#-consuming-rest-endpoints)**
+11. **[Using Data Sources in Spring Apps](#-using-data-sources-in-spring-apps)**
+12. **[Using Transactions in Spring Apps](#-using-transactions-in-spring-apps)**
+13. **[Implementing Data Persistence with Spring Data](#-implementing-data-persistence-with-spring-data)**
+14. **[Testing Your Spring App](#-testing-your-spring-app)**
 
 ---
 
