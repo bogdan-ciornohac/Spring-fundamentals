@@ -1,6 +1,27 @@
 <h1 style="font-size: 5rem; font-weight: bold; text-align:center;">
 🌱 SPRING FUNDAMENTALS
 </h1>
+---
+
+# 📚 Table of Contents — Spring Fundamentals
+
+1. **[Defining Beans](#defining-beans)**
+2. **[Wiring Beans](#wiring-beans)**
+3. **[Using Abstraction](#using-abstraction)**
+4. **[Bean Scope and Lifecycle](#bean-scope-and-lifecycle)**
+5. **[Using Aspects with Spring AOP](#using-aspects-with-spring-aop)**
+6. **[Spring Boot and Spring MVC](#spring-boot-and-spring-mvc)**
+7. **[Implementing Web Apps with Spring Boot and Spring MVC](#implementing-web-apps-with-spring-boot-and-spring-mvc)**
+8. **[Using the Spring Web Scopes](#using-the-spring-web-scopes)**
+9. **[Implementing REST Services](#implementing-rest-services)**
+10. **[Consuming REST Endpoints](#consuming-rest-endpoints)**
+11. **[Using Data Sources in Spring Apps](#using-data-sources-in-spring-apps)**
+12. **[Using Transactions in Spring Apps](#using-transactions-in-spring-apps)**
+13. **[Implementing Data Persistence with Spring Data](#implementing-data-persistence-with-spring-data)**
+14. **[Testing Your Spring App](#testing-your-spring-app)**
+
+---
+
 
 # Defining Beans in Spring
 
@@ -1522,4 +1543,97 @@ void deactivateUser(Long id);
 * Use `@Query` to clearly define custom queries
 * Avoid relying on method name query derivation for complex operations
 * Use `@Modifying` for any repository method that changes data
+
+---
+
+# 🧪 Testing Your Spring App
+
+Testing is an essential part of software development. A **test** is a small piece of code written to validate the behavior of a particular part of your application. Tests help ensure that new changes do not break existing functionality and act as living documentation for how your code is intended to behave.
+
+Spring applications support multiple testing approaches, and understanding when and how to test different parts of your system is fundamental to building reliable software.
+
+---
+
+## 🧩 Types of Tests
+
+In general, tests fall into **two major categories**:
+
+---
+
+## 🟦 1. Unit Tests
+
+A **unit test** focuses on a *single, isolated* component—usually a method or a small class.
+
+### ✔️ Characteristics:
+
+* Validates how one piece of logic behaves in isolation
+* Runs very fast
+* Helps identify problems in a small component directly
+* Does not load the entire Spring context
+
+Unit tests are ideal for testing pure logic or business rules without involving databases, controllers, or external systems.
+
+---
+
+## 🟧 2. Integration Tests
+
+An **integration test** validates how two or more components work *together*.
+
+### ✔️ Characteristics:
+
+* Ensures multiple components integrate correctly
+* May involve loading the Spring context
+* Often interacts with real infrastructure (database, controllers, etc.)
+* Slower than unit tests but essential for full correctness
+
+Integration tests catch issues that don’t show up when testing components individually.
+
+---
+
+## 🧪 Using Mocks in Testing
+
+Sometimes, you want your test to focus only on a specific set of interactions and ignore others.
+In these cases, you replace real components with **mocks**—fake objects under your control.
+
+### ✔️ Why use mocks?
+
+* Remove dependencies that you do not want to test
+* Allow precise control over method responses
+* Help focus tests on the behavior of one or a few components
+* Enable predictable and repeatable test outcomes
+
+Mocking tools (such as Mockito) are commonly used with Spring tests.
+
+---
+
+## 🔄 Structure of a Good Test
+
+Every test generally follows **three main steps**:
+
+### 1️⃣ Assumptions (Arrange)
+
+* Define input values
+* Configure mock behavior
+* Prepare the environment for testing
+
+### 2️⃣ Execution (Act)
+
+* Call the method or component you want to test
+
+### 3️⃣ Validations (Assert)
+
+* Verify that the method behaved as expected
+* Check returned values, interactions, or side effects
+
+This pattern keeps tests clean, readable, and easy to maintain.
+
+---
+
+## 🧠 Summary
+
+* Tests ensure stable development and act as documentation
+* **Unit tests** validate isolated logic and run quickly
+* **Integration tests** validate how components work together
+* Use **mocks** to remove unwanted dependencies during tests
+* A well-structured test follows: **Arrange → Act → Assert**
 
